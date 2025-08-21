@@ -1,0 +1,59 @@
+sequenceDiagram
+  participant browser
+  participant server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+  activate server
+  server-->>browser: HTML document
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+  activate server
+  server-->>browser: the css file
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+  activate server
+  server-->>browser: the JavaScript file
+  deactivate server
+
+  Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+  activate server
+  server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+  deactivate server
+
+  Note right of browser: The browser executes the callback function that renders the notes
+
+  Note right of browser: User enters text in the form field and clicks the Save button
+
+  browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note (form data: note=user input)
+  activate server
+  Note left of server: Server adds new note to array (content: user input, date: current timestamp) and prepares redirect (no database persistence)
+  server-->>browser: HTTP status code 302 (redirect with Location: /notes in headers)
+  deactivate server
+
+  Note right of browser: Browser follows redirect, reloading the page
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+  activate server
+  server-->>browser: HTML document
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+  activate server
+  server-->>browser: the css file
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+  activate server
+  server-->>browser: the JavaScript file
+  deactivate server
+
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+  activate server
+  server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, { "content": "user input", "date": "current" }, ... ] (updated with new note)
+  deactivate server
+
+  Note right of browser: Browser re-renders the notes list with the updated JSON
