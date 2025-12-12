@@ -1,59 +1,49 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-
-const Filter = ({ query, handleSearch }) => {
-  return (
-    <div>filter shown with <input value={query} onChange={handleSearch} /></div>
-  )
-}
-
-const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNumberChange }) => {
-  return (
-    <form onSubmit={addPerson}>
-      <div>name: <input value={newName} onChange={handleNameChange} /></div>
-      <div>number: <input value={newNumber} onChange={handleNumberChange} /></div>
-      <div><button type="submit">add</button></div>
-    </form>
-  )
-}
-
-const Persons = ({ persons, query }) => {
-  const filteredPersons = persons.filter(person =>
-    person.name.toLowerCase().includes(query.toLowerCase())
-  );
-
-  return (
-    <div>
-      {filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
-    </div>
-  )
-}
+import personService from './services/persons'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [query, setQuery] = useState('');
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
-      .catch(error => console.error('Error fetching data:', error))
   }, [])
 
   const handleNameChange = (event) => {
-    setNewName(event.target.value);
+    setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
+    setNewNumber(event.target.value)
   }
 
   const handleSearch = (event) => {
-    setQuery(event.target.value);
+    setQuery(event.target.value)
+  }
+
+  const handleDeletePerson = (id) => {
+    const person = persons.find(p => p.id === id)
+    
+    if (confirm(`Delete ${person.name}?`)) {
+      personService
+      .deletePerson(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+      .catch(error => {
+          console.error('Error deleting person:', error)
+        }
+      )
+    }
   }
 
   const addPerson = (event) => {
@@ -64,12 +54,34 @@ const App = () => {
       return;
     }
 
-    if (!persons.find(person => person.name === newName)) {
-      setPersons(persons.concat({ name: newName, number: newNumber, id: persons.length + 1 }));
-      setNewName('');
-      setNewNumber('');
+    const person = persons.find(p => p.name.toLowerCase() === newName.toLowerCase())
+
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
+
+    if (!person) {
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     } else {
-      alert(`${newName} is already added to phonebook`);
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update(person.id, personObject)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            alert('Failed to update:', error.message)
+          })
+      }
     }
   }
 
@@ -88,7 +100,11 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} query={query} />
+      <Persons
+        persons={persons}
+        query={query}
+        handleDeletePerson={handleDeletePerson}
+      />
     </div>
   )
 }
