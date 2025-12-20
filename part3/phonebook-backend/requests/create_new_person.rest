@@ -1,0 +1,27 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": " DaN abramov ",
+  "number": "93-12-7544667"
+}
+
+###
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "",
+  "number": "93-12-7544667"
+}
+
+###
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Dilan Doe",
+  "number": "93-12-7544667"
+}
