@@ -12,12 +12,12 @@ mongoose.set('strictQuery', false)
 
 mongoose.connect(url, { family: 4 })
 
-const personScheme = new mongoose.Schema({
+const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
 
-const Person = mongoose.model('Person', personScheme)
+const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length === 3) {
   try {
