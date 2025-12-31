@@ -6,3 +6,4 @@
 /part2/courseinfo/node_modules
 /part2/phonebook/node_modules
 /part3/phonebook-backend/node_modules
+/part3/phonebook-backend/.env

@@ -88,8 +88,15 @@ const App = () => {
           setNewNumber('')
         })
         .catch((error) => {
-          console.error('Error:', error.message)
-          showNotification(`Error: ${error.message}`, true)
+          console.log(error)
+          let errorMessage = 'Validation error'
+
+          if (error.response?.data?.errors) {
+            errorMessage = error.response.data.errors.join('\n')
+            console.log(errorMessage)
+          }
+
+          showNotification(errorMessage, true)
         })
     } else {
       if (confirm(`${name} is already added to phonebook, replace the old number with a new one?`)) {
@@ -101,8 +108,13 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
-          .catch(() => {
-            showNotification(`Information of ${name} has alreay been removed from server`, true)
+          .catch((error) => {
+            if (error.response?.status === 404) {
+              showNotification(`Information of ${person.name} has alreay been removed from server`, true)
+              setPersons(persons.filter(p => p.id !== person.id))
+            } else {
+              showNotification(error.response?.data?.errors.join('\n') || 'Error updating person', true)
+            }
           })
       }
     }
