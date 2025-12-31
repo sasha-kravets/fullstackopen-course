@@ -1,6 +1,6 @@
 require('dotenv').config()
-const express = require("express")
-const morgan = require("morgan")
+const express = require('express')
+const morgan = require('morgan')
 const Person = require('./models/person')
 const app = express()
 
@@ -49,7 +49,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => { response.status(204).end() })
+    .then(() => { response.status(204).end() })
     .catch(error => next(error))
 })
 
@@ -99,7 +99,6 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    
     const errors = Object.values(error.errors).map(err => err.message)
     return response.status(400).json({ errors: errors })
   }
@@ -109,7 +108,7 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
