@@ -53,7 +53,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// Saving person to DB
 app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body
 
@@ -68,23 +67,23 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// При завантаженні сторінки з БД підтягуються всі записи (разом з id)
-// Тому коли ми робимо запит '/api/persons/:id', id дістається з потрібного запису з стану React (масив persons)
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
   Person.findById(request.params.id)
     .then(person => {
-      if (!person) {
-        return response.status(404).end()
-      }
+      if (!person) return response.status(404).end()
 
       person.name = name
       person.number = number
 
-      return person.save()
+      person
+        // .validate()
+        // .then(() => person.save())
+        .save()
+        .then(updatedPerson => response.json(updatedPerson))
+        .catch(error => next(error))
     })
-    .then(updatedPerson => response.json(updatedPerson))
     .catch(error => next(error))
 })
 
@@ -99,6 +98,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    
+    const errors = Object.values(error.errors).map(err => err.message)
+    return response.status(400).json({ errors: errors })
   }
 
   next(error)
