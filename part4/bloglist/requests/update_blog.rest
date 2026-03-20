@@ -1,0 +1,24 @@
+PUT http://localhost:3003/api/blogs/69bc93cec11353569e2cde57
+Content-Type: application/json
+
+{
+  "url": "fghdfghd",
+  "title": "fghfghdf",
+  "author": "ghdfghd",
+  "userId": "69b0a6a43a45c3e4564d4aed",
+  "likes": 125
+}
+
+###
+
+PUT http://localhost:3003/api/blogs/69bc93cec11353569e2cde57
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNrcmF2ZXRzIiwiaWQiOiI2OWIwYTZhNDNhNDVjM2U0NTY0ZDRhZWQiLCJpYXQiOjE3NzM5NjYwMzEsImV4cCI6MTc3Mzk2OTYzMX0.KqHMb-gLLM0BOhDP2kV_JDwsz4q232xZda0kkRe8zQs
+
+{
+  "url": "fghdfghd",
+  "title": "fghfghdf",
+  "author": "ghdfghd",
+  "userId": "69b0a6a43a45c3e4564d4aed",
+  "likes": 125
+}
