@@ -15,7 +15,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const App = () => {
     }
   }, [])
 
-  useEffect(() => {    
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       setNotification({ message: '', type: '' })
     }, 4000)
@@ -89,7 +89,7 @@ const App = () => {
       )
       blogService.setToken(user.token)
       setUser(user)
-      
+
       showNotification('You have successfully logged in')
     } catch {
       showNotification('Wrong username or password', 'error')
@@ -127,7 +127,7 @@ const App = () => {
       <Notification notification={notification} />
 
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      
+
       {blogForm()}
 
       {sortedBlogs.map(blog =>

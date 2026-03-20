@@ -1,16 +1,16 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, updateLikes, username, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const {id, title, url, likes, author, user} = blog
+  const { id, title, url, likes, author, user } = blog
 
   const toggleDetails = () => {
     setIsExpanded(!isExpanded)
   }
-  
-  const detailsStyle = { display: isExpanded ? '' : 'none' } 
-  const removeBtnStyle = { display: username === user.username ? '' : 'none' } 
+
+  const detailsStyle = { display: isExpanded ? '' : 'none' }
+  const removeBtnStyle = { display: username === user.username ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -35,7 +35,7 @@ const Blog = ({ blog, updateLikes, username, onDelete }) => {
       onDelete(id)
     }
   }
-  
+
   return (
     <div style={blogStyle}>
       <div>
