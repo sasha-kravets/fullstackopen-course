@@ -7,3 +7,6 @@
 /part2/phonebook/node_modules
 /part3/phonebook-backend/node_modules
 /part3/phonebook-backend/.env
+/part4/bloglist/node_modules
+/part4/bloglist/.env
+/part5/bloglist-frontend/node_modules
