@@ -37,17 +37,32 @@ const Blog = ({ blog, updateLikes, username, onDelete }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <div>
-        {title} <button onClick={toggleDetails}>{isExpanded ? 'hide' : 'view'}</button>
+    <div style={blogStyle} className='blog'>
+      <div className="blog__header">
+        <span className="blog__title">{title}</span>{' '}
+        <span className="blog__author">{author}</span>{' '}
+        <button
+          className="blog__toggle-btn"
+          onClick={toggleDetails}
+        >
+          {isExpanded ? 'hide' : 'view'}
+        </button>
       </div>
 
-      <div style={detailsStyle}>
-        <div>{url}</div>
-        <div>likes {likes} <button onClick={addLike}>like</button></div>
-        <div>{author}</div>
+      <div style={detailsStyle} className="blog__details">
+        <div className="blog__url">{url}</div>
+        <div className="blog__likes">
+          <span>likes {likes}</span>{' '}
+          <button
+            className="blog__like-btn"
+            onClick={addLike}
+          >
+            like
+          </button>
+        </div>
         <button
           style={removeBtnStyle}
+          className="blog__remove-btn"
           onClick={deleteBlog}
         >
           remove
