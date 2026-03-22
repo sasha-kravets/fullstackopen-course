@@ -91,21 +91,33 @@ describe('Blog app', () => {
         beforeEach(async ({ page }) => {
           await createBlog(page, 'New Blog 1', 'Playwright', 'https://playwright.dev/')
           await createBlog(page, 'New Blog 2', 'Playwright', 'https://playwright.dev/')
+          await createBlog(page, 'New Blog 3', 'Playwright', 'https://playwright.dev/')
         })
 
         test('the blogs are arranged in the order according to the likes', async ({ page }) => {
-          await expect(page.locator('.blog')).toHaveCount(2);
+          await expect(page.locator('.blog')).toHaveCount(3);
 
-          const secondBlog = page.locator('.blog').nth(1)
-          await secondBlog.getByRole('button', { name: 'view' }).click()
-          await secondBlog.getByRole('button', { name: 'like' }).click()
+          const blog1 = page.locator('.blog').filter({ hasText: 'New Blog 1 Playwright' })
+          const blog2 = page.locator('.blog').filter({ hasText: 'New Blog 2 Playwright' })
+          const blog3 = page.locator('.blog').filter({ hasText: 'New Blog 3 Playwright' })
 
-          await expect(page.getByText('likes 1')).toBeVisible()
+          await blog1.getByRole('button', { name: 'view' }).click()
+          await blog2.getByRole('button', { name: 'view' }).click()
+          await blog3.getByRole('button', { name: 'view' }).click()
+
+          await blog2.getByRole('button', { name: 'like' }).click()
+          await expect(blog2.getByText('likes 1')).toBeVisible()
+          await blog2.getByRole('button', { name: 'like' }).click()
+          await expect(blog2.getByText('likes 2')).toBeVisible()
+
+          await blog3.getByRole('button', { name: 'like' }).click()
+          await expect(blog3.getByText('likes 1')).toBeVisible()
 
           const titles = await page.locator('.blog .blog__title').allTextContents()
 
           expect(titles[0]).toEqual('New Blog 2')
-          expect(titles[1]).toEqual('New Blog 1')
+          expect(titles[1]).toEqual('New Blog 3')
+          expect(titles[2]).toEqual('New Blog 1')
         })
       })
     })
