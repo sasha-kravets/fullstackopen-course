@@ -10,7 +10,7 @@ const Blog = ({ blog, updateLikes, username, onDelete }) => {
   }
 
   const detailsStyle = { display: isExpanded ? '' : 'none' }
-  const removeBtnStyle = { display: username === user.username ? '' : 'none' }
+  const removeBtnStyle = { display: username === user?.username ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
