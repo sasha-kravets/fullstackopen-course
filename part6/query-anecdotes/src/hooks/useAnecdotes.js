@@ -16,7 +16,7 @@ export const useAnecdotes = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
-    }
+    },
   })
 
   const updateAnecdoteMutation = useMutation({
@@ -37,7 +37,10 @@ export const useAnecdotes = () => {
     anecdotes: result.data,
     isPending: result.isPending,
     isError: result.isError,
-    createAnecdote: (content) => newAnecdoteMutation.mutate({ content, votes: 0 }),
+    createAnecdote: (content, onError, onSuccess) => newAnecdoteMutation.mutate(
+      { content, votes: 0 },
+      { onError, onSuccess },
+    ),
     vote: (anecdote) => updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
   }
 }
