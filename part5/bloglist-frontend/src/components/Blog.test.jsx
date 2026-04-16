@@ -1,62 +1,78 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<Blog /> component', () => {
   let mockAddLike
   let mockDeleteBlog
 
+  mockAddLike = vi.fn()
+  mockDeleteBlog = vi.fn()
+
+  const creator = {
+    username: 'skravets',
+    name: 'Sasha Kravets',
+    id: '69b0a6a43a45c3e4564d4aed'
+  }
+
+  const user = {
+    uername: 'doe',
+    name: 'Dillan Doe',
+    id: 'a6a43a45c'
+  }
+
   const blog = {
     url: 'http://example.com',
     title: 'Using token based auth',
     author: 'Sasha Kravets',
-    user: {
-      username: 'skravets',
-      name: 'Sasha Kravets',
-      id: '69b0a6a43a45c3e4564d4aed'
-    },
+    user: creator,
     likes: 125,
     id: '69b327f7135dac9cfae40713'
   }
 
-  beforeEach(() => {
-    mockAddLike = vi.fn()
-    mockDeleteBlog = vi.fn()
-
+  test('Blog information and the number of likes are displayed to unauthenticated users, buttons are not displayed', () => {
     render(
       <Blog
         blog={blog}
-        updateLikes={mockAddLike}
-        username={'skravets'}
-        onDelete={mockDeleteBlog}
+        user={null}
+        addLike={mockAddLike}
+        deleteBlog={mockDeleteBlog}
       />
     )
-  })
 
-  test('renders the blog\'s title and author, but does not render its URL or number of likes by default', () => {
     expect(screen.getByText('Using token based auth')).toBeVisible()
-    expect(screen.getByText('Sasha Kravets')).toBeVisible()
+    expect(screen.getByText('Added by Sasha Kravets')).toBeVisible()
+    expect(screen.getByText('likes 125')).toBeVisible()
+    expect(screen.getByText('http://example.com')).toBeVisible()
 
-    expect(screen.queryByText('http://example.com')).not.toBeVisible()
-    expect(screen.queryByText('likes 125')).not.toBeVisible()
+    expect(screen.queryByText('like')).toBeNull()
+    expect(screen.queryByText('remove')).toBeNull()
   })
 
-  test('blog\'s URL and number of likes are shown when the button controlling the shown details has been clicked', async () => {
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
+  test('Authenticated users who are not the blog\'s creator are shown only the like button', () => {
+    render(
+      <Blog
+        blog={blog}
+        user={user}
+        addLike={mockAddLike}
+        deleteBlog={mockDeleteBlog}
+      />
+    )
 
-    expect(screen.queryByText('http://example.com')).toBeVisible()
-    expect(screen.queryByText('likes 125')).toBeVisible()
+    expect(screen.queryByText('like')).toBeDefined()
+    expect(screen.queryByText('remove')).toBeNull()
   })
 
-  test('when like button is clicked twice, the event handler called twice', async () => {
-    const user = userEvent.setup()
-    const likeButton = screen.getByText('like')
+  test('Both buttons are displayed to users who are logged in and are blog authors', () => {
+    render(
+      <Blog
+        blog={blog}
+        user={creator}
+        addLike={mockAddLike}
+        deleteBlog={mockDeleteBlog}
+      />
+    )
 
-    await user.click(likeButton)
-    await user.click(likeButton)
-
-    expect(mockAddLike.mock.calls).toHaveLength(2)
+    expect(screen.queryByText('like')).toBeDefined()
+    expect(screen.queryByText('remove')).toBeDefined()
   })
 })

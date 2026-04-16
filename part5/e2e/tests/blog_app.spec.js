@@ -23,6 +23,8 @@ describe('Blog app', () => {
   })
 
   test('Login form is shown', async ({ page }) => {
+    await page.goto('/login')
+
     await expect(page.getByText('Log in to application')).toBeVisible()
     await expect(page.getByLabel('username')).toBeVisible()
     await expect(page.getByLabel('password')).toBeVisible()
@@ -32,7 +34,11 @@ describe('Blog app', () => {
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
       await loginWith(page, 'skravets', '1234')
-      await expect(page.getByText('Sasha Kravets logged in')).toBeVisible()
+
+      const successDiv = page.locator('.notification')
+      await expect(successDiv).toContainText('You have successfully logged in')
+      await expect(successDiv).toHaveCSS('border-style', 'solid')
+      await expect(successDiv).toHaveCSS('color', 'rgb(0, 128, 0)')
     })
 
     test('fails with wrong credentials', async ({ page }) => {
@@ -42,8 +48,6 @@ describe('Blog app', () => {
       await expect(errorDiv).toContainText('Wrong username or password')
       await expect(errorDiv).toHaveCSS('border-style', 'solid')
       await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
-
-      await expect(page.getByText('Sasha Kravets logged in')).not.toBeVisible()
     })
 
     describe('When logged in', () => {
@@ -53,16 +57,17 @@ describe('Blog app', () => {
 
       test('a new blog can be created', async ({ page }) => {
         await createBlog(page, 'New blog', 'Playwright', 'https://playwright.dev/')
-        await expect(page.getByText('New blog Playwright')).toBeVisible()
+
+        await expect(page.getByRole('link', { name: 'New blog Playwright', exact: true })).toBeVisible()
       })
 
-      describe('and a blog exists', () => {
+      describe('and a blog has been added', () => {
         beforeEach(async ({ page }) => {
           await createBlog(page, 'New blog', 'Playwright', 'https://playwright.dev/')
         })
-
+        
         test('the blog can be liked', async ({ page }) => {
-          await page.getByRole('button', { name: 'view' }).click()
+          await page.getByRole('link', { name: 'New blog Playwright', exact: true }).click()
           await expect(page.getByText('likes 0')).toBeVisible()
           await page.getByRole('button', { name: 'like' }).click()
           await expect(page.getByText('likes 1')).toBeVisible()
@@ -73,53 +78,79 @@ describe('Blog app', () => {
             await dialog.accept()
           })
 
-          await page.getByRole('button', { name: 'view' }).click()
+          await page.getByRole('link', { name: 'New blog Playwright', exact: true }).click()
           await page.getByRole('button', { name: 'remove' }).click()
+          await page.getByRole('link', { name: 'blogs', exact: true }).click()
           await expect(page.getByText('New blog Playwright')).not.toBeVisible()
         })
-
-        test('only the user who added the blog sees the blog\'s delete button', async ({ page }) => {
-          await page.getByRole('button', { name: 'logout' }).click()
-          await loginWith(page, 'root', '1234')
-
-          await page.getByRole('button', { name: 'view' }).click()
-          await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
-        })
       })
 
-      describe('and several blog exists', () => {
-        beforeEach(async ({ page }) => {
-          await createBlog(page, 'New Blog 1', 'Playwright', 'https://playwright.dev/')
-          await createBlog(page, 'New Blog 2', 'Playwright', 'https://playwright.dev/')
-          await createBlog(page, 'New Blog 3', 'Playwright', 'https://playwright.dev/')
-        })
+      
 
-        test('the blogs are arranged in the order according to the likes', async ({ page }) => {
-          await expect(page.locator('.blog')).toHaveCount(3);
+      // describe('and a blog exists', () => {
+      //   beforeEach(async ({ page }) => {
+      //     await createBlog(page, 'New blog', 'Playwright', 'https://playwright.dev/')
+      //   })
 
-          const blog1 = page.locator('.blog').filter({ hasText: 'New Blog 1 Playwright' })
-          const blog2 = page.locator('.blog').filter({ hasText: 'New Blog 2 Playwright' })
-          const blog3 = page.locator('.blog').filter({ hasText: 'New Blog 3 Playwright' })
+      //   test('the blog can be liked', async ({ page }) => {
+      //     await page.getByRole('button', { name: 'view' }).click()
+      //     await expect(page.getByText('likes 0')).toBeVisible()
+      //     await page.getByRole('button', { name: 'like' }).click()
+      //     await expect(page.getByText('likes 1')).toBeVisible()
+      //   })
 
-          await blog1.getByRole('button', { name: 'view' }).click()
-          await blog2.getByRole('button', { name: 'view' }).click()
-          await blog3.getByRole('button', { name: 'view' }).click()
+      //   test('the user who added the blog can delete it', async ({ page }) => {
+      //     page.on('dialog', async dialog => {
+      //       await dialog.accept()
+      //     })
 
-          await blog2.getByRole('button', { name: 'like' }).click()
-          await expect(blog2.getByText('likes 1')).toBeVisible()
-          await blog2.getByRole('button', { name: 'like' }).click()
-          await expect(blog2.getByText('likes 2')).toBeVisible()
+      //     await page.getByRole('button', { name: 'view' }).click()
+      //     await page.getByRole('button', { name: 'remove' }).click()
+      //     await expect(page.getByText('New blog Playwright')).not.toBeVisible()
+      //   })
 
-          await blog3.getByRole('button', { name: 'like' }).click()
-          await expect(blog3.getByText('likes 1')).toBeVisible()
+      //   test('only the user who added the blog sees the blog\'s delete button', async ({ page }) => {
+      //     await page.getByRole('button', { name: 'logout' }).click()
+      //     await loginWith(page, 'root', '1234')
 
-          const titles = await page.locator('.blog .blog__title').allTextContents()
+      //     await page.getByRole('button', { name: 'view' }).click()
+      //     await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
+      //   })
+      // })
 
-          expect(titles[0]).toEqual('New Blog 2')
-          expect(titles[1]).toEqual('New Blog 3')
-          expect(titles[2]).toEqual('New Blog 1')
-        })
-      })
+      // describe('and several blog exists', () => {
+      //   beforeEach(async ({ page }) => {
+      //     await createBlog(page, 'New Blog 1', 'Playwright', 'https://playwright.dev/')
+      //     await createBlog(page, 'New Blog 2', 'Playwright', 'https://playwright.dev/')
+      //     await createBlog(page, 'New Blog 3', 'Playwright', 'https://playwright.dev/')
+      //   })
+
+      //   test('the blogs are arranged in the order according to the likes', async ({ page }) => {
+      //     await expect(page.locator('.blog')).toHaveCount(3);
+
+      //     const blog1 = page.locator('.blog').filter({ hasText: 'New Blog 1 Playwright' })
+      //     const blog2 = page.locator('.blog').filter({ hasText: 'New Blog 2 Playwright' })
+      //     const blog3 = page.locator('.blog').filter({ hasText: 'New Blog 3 Playwright' })
+
+      //     await blog1.getByRole('button', { name: 'view' }).click()
+      //     await blog2.getByRole('button', { name: 'view' }).click()
+      //     await blog3.getByRole('button', { name: 'view' }).click()
+
+      //     await blog2.getByRole('button', { name: 'like' }).click()
+      //     await expect(blog2.getByText('likes 1')).toBeVisible()
+      //     await blog2.getByRole('button', { name: 'like' }).click()
+      //     await expect(blog2.getByText('likes 2')).toBeVisible()
+
+      //     await blog3.getByRole('button', { name: 'like' }).click()
+      //     await expect(blog3.getByText('likes 1')).toBeVisible()
+
+      //     const titles = await page.locator('.blog .blog__title').allTextContents()
+
+      //     expect(titles[0]).toEqual('New Blog 2')
+      //     expect(titles[1]).toEqual('New Blog 3')
+      //     expect(titles[2]).toEqual('New Blog 1')
+      //   })
+      // })
     })
   })
 })

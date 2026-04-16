@@ -15,3 +15,11 @@
 .notification.error {
   color: red;
 }
+
+nav {
+  margin-bottom: 10px;
+}
+
+nav > * {
+  margin-right: 5px;
+}
