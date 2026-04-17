@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Typography, Button, Box } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -19,42 +20,38 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
-      <h2>create new</h2>
+    <Box sx={{ mt: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Log in to application
+      </Typography>
+
       <form onSubmit={addBlog}>
-        <div>
-          <label>
-            title:
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            author:
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            url:
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </label>
-        </div>
-        <button>create</button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
+          <TextField
+            label="title"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+            sx={{ width: '100%', maxWidth: 600 }}
+          />
+          <TextField
+            label="author"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+            sx={{ width: '100%', maxWidth: 600 }}
+          />
+          <TextField
+            label="url"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+            sx={{ width: '100%', maxWidth: 600 }}
+          />
+
+          <Button type='submit' variant='contained'>
+            create
+          </Button>
+        </Box>
       </form>
-    </div>
+    </Box>
   )
 }
 

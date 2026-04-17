@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Typography, Button, Box } from '@mui/material'
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('')
@@ -12,33 +13,57 @@ const LoginForm = ({ onLogin }) => {
   }
 
   return (
-    <div>
-      <h2>Log in to application</h2>
+    <Box sx={{ mt: 2 }}>
+      <Typography variant="h4" gutterBottom>
+        Log in to application
+      </Typography>
 
       <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
-        </div>
-        <button type='submit'>login</button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
+          <TextField
+            label="username"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+          <TextField
+            label="password"
+            type="password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+
+          <Button type="submit" variant="contained">
+            login
+          </Button>
+        </Box>
       </form>
-    </div>
+    </Box>
+    // <div>
+    //   <h2>Log in to application</h2>
+
+  //   <form onSubmit={handleLogin}>
+  //     <div>
+  //       <TextField
+  //         label="username"
+  //         value={username}
+  //         onChange={({ target }) => setUsername(target.value)}
+  //       />
+  //     </div>
+  //     <div>
+  //       <TextField
+  //         label="password"
+  //         type="password"
+  //         value={password}
+  //         onChange={({ target }) => setPassword(target.value)}
+  //         style={{ marginTop: 10 }}
+  //       />
+  //     </div>
+
+  //     <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
+  //       login
+  //     </Button>
+  //   </form>
+  // </div>
   )
 }
 

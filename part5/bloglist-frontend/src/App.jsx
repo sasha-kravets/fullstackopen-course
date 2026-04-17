@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
+import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -20,7 +21,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs(blogs)
     )
   }, [])
 
@@ -114,18 +115,30 @@ const App = () => {
     showNotification('You have successfully logged out')
   }
 
+  const btnStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+
   return (
-    <div>
-      <nav>
-        <Link to="/">blogs</Link>
-        {!user
-          ? <Link to="/login">login</Link>
-          : <>
-            <Link to="/create">new blog</Link>
-            <button onClick={handleLogout}>logout</button>
-          </>
-        }
-      </nav>
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" >
+            Blog App
+          </Typography>
+
+          <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 1 }}>
+            <Button color="inherit" component={Link} to="/" sx={btnStyle}>
+              blogs
+            </Button>
+            {!user
+              ? <Button color="inherit" component={Link} to="/login" sx={btnStyle}>login</Button>
+              : <>
+                <Button color="inherit" component={Link} to="/create" sx={btnStyle}>new blog</Button>
+                <Button color="inherit" onClick={handleLogout} sx={btnStyle}>logout</Button>
+              </>
+            }
+          </Box>
+        </Toolbar>
+      </AppBar>
 
       <Notification notification={notification} />
 
@@ -143,7 +156,7 @@ const App = () => {
         <Route path='/login' element={<LoginForm onLogin={handleLogin} />} />
       </Routes>
 
-    </div>
+    </Container>
   )
 }
 

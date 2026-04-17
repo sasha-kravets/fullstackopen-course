@@ -1,3 +1,5 @@
+import { Box, Button, Card, CardContent, Link as MuiLink, Typography } from '@mui/material'
+
 const Blog = ({ blog, user, addLike, deleteBlog }) => {
 
   if (!blog) {
@@ -13,32 +15,40 @@ const Blog = ({ blog, user, addLike, deleteBlog }) => {
   }
 
   return (
-    <div className='blog'>
-      <h2 className="blog__title">{blog.title}</h2>
-      <div className="blog__details">
-        <a href={blog.url} className="blog__url">{blog.url}</a>
-        <div className="blog__likes">
-          <span>likes {blog.likes}</span>{' '}
+    <Card sx={{ mt: 1 }}>
+      <CardContent>
+        <Typography variant="h5" sx={{ fontWeight: 500 }}>
+          {blog.title}
+        </Typography>
+        <Typography sx={{ color: 'text.secondary', mt: 1, mb: 0.5 }}>
+          by {blog.author}
+        </Typography>
+        <MuiLink href={blog.url}>
+          {blog.url}
+        </MuiLink>
+        <Typography sx={{ color: 'text.secondary', mt: 1, mb: 0.5 }}>
+          Added by {blog.user.name}
+        </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
+          <Typography sx={{ fontWeight: 500   }}>
+            {blog.likes} likes
+          </Typography>
+
           {user && (
-            <button
-              className="blog__like-btn"
-              onClick={() => addLike(blog)}
-            >
+            <Button variant='outlined' onClick={() => addLike(blog)}>
               like
-            </button>
+            </Button>
           )}
-        </div>
-        <div>{`Added by ${blog.author}`}</div>
-        {canBeRemoved() && (
-          <button
-            className="blog__remove-btn"
-            onClick={handleDelete}
-          >
-            remove
-          </button>
-        )}
-      </div>
-    </div>
+
+          {canBeRemoved() && (
+            <Button variant="outlined" color="error" onClick={handleDelete}>
+              remove
+            </Button>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
   )
 }
 
