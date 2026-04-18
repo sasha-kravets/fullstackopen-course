@@ -14,3 +14,8 @@
 /part6/redux-anecdotes/node_modules
 /part6/unicafe-zustand/node_modules
 /part6/zustand-anecdotes/node_modules
+/part7/bloglist/node_modules
+/part7/bloglist/server/node_modules
+/part7/bloglist/server/.env
+/part7/bloglist/clinet/node_modules
+/part7/bloglist/server/dist
