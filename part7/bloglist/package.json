@@ -1,0 +1,14 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "rm -rf server/dist && npm run build:ui && cp -r client/dist server/",
+    "start": "npm run start --prefix server"
+  },
+  "author": "Sasha Kravets",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

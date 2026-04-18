@@ -1,0 +1,36 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "url": "http://example.com",
+  "title": "Blog Titile",
+  "author": "Blog Author R",
+  "userId": "69b0a69d1d22b624dfaf14db",
+  "likes": 25
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "url": "http://example.com",
+  "title": "Blog Titile",
+  "author": "Blog Author SK",
+  "userId": "69b0a6a43a45c3e4564d4aed",
+  "likes": 25
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNrcmF2ZXRzIiwiaWQiOiI2OWIwYTZhNDNhNDVjM2U0NTY0ZDRhZWQiLCJpYXQiOjE3NzMzNTM5NDYsImV4cCI6MTc3MzM1NzU0Nn0.V7-EHlf5kzerGoXkMOU0SzL4K2pptIPdRljWMGHhguA
+
+{
+  "url": "http://example.com",
+  "title": "Using token based auth",
+  "author": "Blog Author SK",
+  "likes": 125
+}
