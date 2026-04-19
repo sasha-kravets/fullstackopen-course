@@ -6,5 +6,5 @@ import { BrowserRouter as Route } from 'react-router-dom'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Route>
     <App />
-  </Route>,
+  </Route>
 )

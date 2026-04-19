@@ -1,31 +1,46 @@
-import { useState } from 'react'
 import { TextField, Typography, Button, Box } from '@mui/material'
+import { useBlogActions, useNotificationActions } from '../store'
+import { useField } from '../hooks'
 
-const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const BlogForm = ({ navigate }) => {
+  const { add } = useBlogActions()
+  const { showNotification } = useNotificationActions()
 
-  const addBlog = (event) => {
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
+
+  const createBlog = async (event) => {
+    const blog = {
+      title: title.value,
+      author: author.value || 'unknown',
+      url: url.value,
+    }
     event.preventDefault()
-    createBlog({
-      title: title,
-      author: author || 'unknown',
-      url: url,
-    })
-
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    try {
+      await add(blog)
+      showNotification(`a new blog ${blog.title} by ${blog.author} added`)
+      title.onReset()
+      author.onReset()
+      url.onReset()
+      navigate('/')
+    } catch (err) {
+      console.log(err)
+      if (err.response?.status === 400) {
+        showNotification('Error: title and url are required', 'error')
+      } else {
+        showNotification(`Error: ${err}`, 'error')
+      }
+    }
   }
 
   return (
     <Box sx={{ mt: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Log in to application
+        Create new Blog
       </Typography>
 
-      <form onSubmit={addBlog}>
+      <form onSubmit={createBlog}>
         <Box
           sx={{
             display: 'flex',
@@ -34,24 +49,9 @@ const BlogForm = ({ createBlog }) => {
             alignItems: 'flex-start',
           }}
         >
-          <TextField
-            label="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-            sx={{ width: '100%', maxWidth: 600 }}
-          />
-          <TextField
-            label="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-            sx={{ width: '100%', maxWidth: 600 }}
-          />
-          <TextField
-            label="url"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-            sx={{ width: '100%', maxWidth: 600 }}
-          />
+          <TextField label="title" sx={{ width: '100%', maxWidth: 600 }} {...title} />
+          <TextField label="author" sx={{ width: '100%', maxWidth: 600 }} {...author} />
+          <TextField label="url" sx={{ width: '100%', maxWidth: 600 }} {...url} />
 
           <Button type="submit" variant="contained">
             create

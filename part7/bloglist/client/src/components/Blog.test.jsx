@@ -30,14 +30,7 @@ describe('<Blog /> component', () => {
   }
 
   test('Blog information and the number of likes are displayed to unauthenticated users, buttons are not displayed', () => {
-    render(
-      <Blog
-        blog={blog}
-        user={null}
-        addLike={mockAddLike}
-        deleteBlog={mockDeleteBlog}
-      />,
-    )
+    render(<Blog blog={blog} user={null} addLike={mockAddLike} deleteBlog={mockDeleteBlog} />)
 
     expect(screen.getByText('Using token based auth')).toBeVisible()
     expect(screen.getByText('Added by Sasha Kravets')).toBeVisible()
@@ -48,29 +41,15 @@ describe('<Blog /> component', () => {
     expect(screen.queryByText('remove')).toBeNull()
   })
 
-  test('Authenticated users who are not the blog\'s creator are shown only the like button', () => {
-    render(
-      <Blog
-        blog={blog}
-        user={user}
-        addLike={mockAddLike}
-        deleteBlog={mockDeleteBlog}
-      />,
-    )
+  test("Authenticated users who are not the blog's creator are shown only the like button", () => {
+    render(<Blog blog={blog} user={user} addLike={mockAddLike} deleteBlog={mockDeleteBlog} />)
 
     expect(screen.queryByText('like')).toBeDefined()
     expect(screen.queryByText('remove')).toBeNull()
   })
 
   test('Both buttons are displayed to users who are logged in and are blog authors', () => {
-    render(
-      <Blog
-        blog={blog}
-        user={creator}
-        addLike={mockAddLike}
-        deleteBlog={mockDeleteBlog}
-      />,
-    )
+    render(<Blog blog={blog} user={creator} addLike={mockAddLike} deleteBlog={mockDeleteBlog} />)
 
     expect(screen.queryByText('like')).toBeDefined()
     expect(screen.queryByText('remove')).toBeDefined()

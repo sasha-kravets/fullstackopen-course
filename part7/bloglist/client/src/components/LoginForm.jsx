@@ -1,15 +1,26 @@
-import { useState } from 'react'
 import { TextField, Typography, Button, Box } from '@mui/material'
+import { useNotificationActions, useUserActions } from '../store'
+import { useField } from '../hooks'
 
-const LoginForm = ({ onLogin }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+const LoginForm = ({ navigate }) => {
+  const { login } = useUserActions()
+  const { showNotification } = useNotificationActions()
 
-  const handleLogin = (event) => {
+  const username = useField('text')
+  const password = useField('password')
+
+  const handleLogin = async (event) => {
     event.preventDefault()
-    onLogin({ username, password })
-    setUsername('')
-    setPassword('')
+    try {
+      await login({ username: username.value, password: password.value })
+      navigate('/')
+      showNotification('You have successfully logged in')
+      username.onReset()
+      password.onReset()
+    } catch (error) {
+      console.log(error)
+      showNotification('Wrong username or password', 'error')
+    }
   }
 
   return (
@@ -27,17 +38,8 @@ const LoginForm = ({ onLogin }) => {
             alignItems: 'flex-start',
           }}
         >
-          <TextField
-            label="username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-          <TextField
-            label="password"
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <TextField label="username" {...username} />
+          <TextField label="password" {...password} />
 
           <Button type="submit" variant="contained">
             login
@@ -45,32 +47,6 @@ const LoginForm = ({ onLogin }) => {
         </Box>
       </form>
     </Box>
-    // <div>
-    //   <h2>Log in to application</h2>
-
-  //   <form onSubmit={handleLogin}>
-  //     <div>
-  //       <TextField
-  //         label="username"
-  //         value={username}
-  //         onChange={({ target }) => setUsername(target.value)}
-  //       />
-  //     </div>
-  //     <div>
-  //       <TextField
-  //         label="password"
-  //         type="password"
-  //         value={password}
-  //         onChange={({ target }) => setPassword(target.value)}
-  //         style={{ marginTop: 10 }}
-  //       />
-  //     </div>
-
-  //     <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
-  //       login
-  //     </Button>
-  //   </form>
-  // </div>
   )
 }
 

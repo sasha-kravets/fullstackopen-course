@@ -1,0 +1,7 @@
+PUT http://localhost:3003/api/blogs/69b0a74e3a45c3e4564d4af4/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNrcmF2ZXRzIiwiaWQiOiI2OWIwYTZhNDNhNDVjM2U0NTY0ZDRhZWQiLCJpYXQiOjE3NzY2MTY2OTgsImV4cCI6MTc3NjYyMDI5OH0.aN4heisaYEQM0zEnsUX_-P357EZ6GnRuOXTlllJBLcY
+
+{
+  "comment": "test"
+}
