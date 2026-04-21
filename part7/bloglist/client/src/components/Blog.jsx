@@ -1,12 +1,25 @@
-import { Box, Button, Card, CardContent, Link as MuiLink, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Link as MuiLink,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useBlogs } from '../hooks/useBlogs'
 import useUser from '../hooks/useUser'
 import { useMatch, useNavigate } from 'react-router-dom'
+import { useField } from '../hooks/useField'
+import useNotification from '../hooks/useNotification'
 
 const Blog = () => {
   const navigate = useNavigate()
-  const { blogs, like, deleteBlog } = useBlogs()
-  const { user } = useUser()
+  const { blogs, like, deleteBlog, addComment } = useBlogs()
+  const { user, logout } = useUser()
+  const { showNotification } = useNotification()
+
+  const comment = useField('text')
 
   const match = useMatch('/blogs/:id')
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
@@ -20,6 +33,12 @@ const Blog = () => {
       await like(blog)
     } catch (err) {
       console.error(err)
+      if (err.response?.status === 401) {
+        logout()
+        showNotification('Error: Only logged-in users can "Like" a blog', 'error')
+      } else {
+        showNotification(`Error: ${err.message || err}`, 'error')
+      }
     }
   }
 
@@ -28,9 +47,34 @@ const Blog = () => {
 
     try {
       await deleteBlog(blog.id)
+      showNotification('Blog is successfully deleted')
       navigate('/')
     } catch (err) {
       console.error(err)
+      showNotification(`Error: ${err.message || err}`, 'error')
+    }
+  }
+
+  const { onReset, ...commentProps } = comment
+
+  const handleComment = async (event) => {
+    event.preventDefault()
+
+    try {
+      await addComment({
+        id: blog.id,
+        comment: comment.value,
+      })
+      comment.onReset()
+      showNotification('Comment is successfully added')
+    } catch (err) {
+      console.error(err)
+      if (err.response?.status === 401) {
+        logout()
+        showNotification('Error: Only logged-in users can comment a blog', 'error')
+      } else {
+        showNotification(`Error: ${err.message || err}`, 'error')
+      }
     }
   }
 
@@ -60,6 +104,36 @@ const Blog = () => {
               remove
             </Button>
           )}
+        </Box>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography gutterBottom sx={{ fontSize: 18 }}>
+            comments
+          </Typography>
+
+          {user && (
+            <Box component="form" onSubmit={handleComment} sx={{ display: 'flex', gap: 1 }}>
+              <TextField label="add a comment" {...commentProps} />
+
+              <Button type="submit" variant="contained">
+                add comment
+              </Button>
+            </Box>
+          )}
+
+          <Box sx={{ mt: 2 }}>
+            {blog.comments && blog.comments.length > 0 ? (
+              <Box component="ul">
+                {blog.comments.map((c) => (
+                  <Typography component="li" key={c.id} sx={{ mt: 0.5 }}>
+                    {c.comment}
+                  </Typography>
+                ))}
+              </Box>
+            ) : (
+              <Typography>No comments yet</Typography>
+            )}
+          </Box>
         </Box>
       </CardContent>
     </Card>

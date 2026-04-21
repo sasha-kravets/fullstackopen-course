@@ -3,34 +3,50 @@ import { TextField, Typography, Button, Box } from '@mui/material'
 import { useBlogs } from '../hooks/useBlogs'
 import { useField } from '../hooks/useField'
 import { useNavigate } from 'react-router-dom'
+import useNotification from '../hooks/useNotification'
+import useUser from '../hooks/useUser'
 
 const BlogForm = () => {
   const navigate = useNavigate()
-  const { addBlog } = useBlogs(navigate)
+  const { addBlog } = useBlogs()
+  const { logout } = useUser()
+  const { showNotification } = useNotification()
 
   const title = useField('text')
   const author = useField('text')
   const url = useField('text')
 
-  const handleSubmit = async () => {
+  const { onReset: resetTitle, ...titleProps } = title
+  const { onReset: resetAuthor, ...authorProps } = author
+  const { onReset: resetUrl, ...urlProps } = url
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     const blogObject = {
-      title: title.value,
-      author: author.value || 'unknown',
-      url: url.value,
+      title: titleProps.value,
+      author: authorProps.value || 'unknown',
+      url: urlProps.value,
     }
 
     try {
       await addBlog(blogObject)
+      resetTitle()
+      resetAuthor()
+      resetUrl()
       navigate('/')
+      showNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`)
     } catch (err) {
       console.error(err)
+      if (err.response?.status === 401) {
+        logout()
+        showNotification('You must be logged in to add a blog', 'error')
+      } else if (err.response?.status === 400) {
+        showNotification('Error: title and url are required', 'error')
+      } else {
+        showNotification(`Error: ${err.message || err}`, 'error')
+      }
     }
-
-    title.onReset()
-    author.onReset()
-    url.onReset()
   }
 
   return (
@@ -48,7 +64,6 @@ const BlogForm = () => {
             alignItems: 'flex-start',
           }}
         >
-
           <TextField label="title" sx={{ width: '100%', maxWidth: 600 }} {...title} />
           <TextField label="author" sx={{ width: '100%', maxWidth: 600 }} {...author} />
           <TextField label="url" sx={{ width: '100%', maxWidth: 600 }} {...url} />

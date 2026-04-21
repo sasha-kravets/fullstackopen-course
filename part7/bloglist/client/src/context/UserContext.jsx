@@ -10,10 +10,9 @@ export default UserContext
 
 export const UserContextProvider = (props) => {
   const [user, setUser] = useState(null)
-  const { showNotification } = useNotification()
 
   const initializeUser = () => {
-    const user  = persistentUserService.getUser()
+    const user = persistentUserService.getUser()
     if (user) {
       setUser(user)
       blogService.setToken(user.token)
@@ -21,22 +20,16 @@ export const UserContextProvider = (props) => {
   }
 
   const login = async (userObject) => {
-    try {
-      const user = await loginService.login(userObject)
+    const user = await loginService.login(userObject)
 
-      persistentUserService.saveUser(user)
-      blogService.setToken(user.token)
-      setUser(user)
-      showNotification('You have successfully logged in')
-    } catch {
-      showNotification('Wrong username or password', 'error')
-    }
+    persistentUserService.saveUser(user)
+    blogService.setToken(user.token)
+    setUser(user)
   }
 
   const logout = () => {
     setUser(null)
     persistentUserService.removeUser()
-    showNotification('You have successfully logged out')
   }
 
   return (
