@@ -1,13 +1,14 @@
 import { Alert } from '@mui/material'
+import useNotification from '../hooks/useNotification'
 
-const Notification = ({ notification }) => {
-  const { message, type } = notification
+const Notification = () => {
+  const { notification } = useNotification()
 
-  if (!message) return null
+  if (!notification.message) return null
 
   return (
-    <Alert style={{ mt: 1, mb: 1 }} severity={type}>
-      {message}
+    <Alert sx={{ mt: 2, mb: 1 }} severity={notification.type}>
+      {notification.message}
     </Alert>
   )
 }

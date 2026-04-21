@@ -4,11 +4,14 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "rm -rf server/dist && npm run build:ui && cp -r client/dist server/",
-    "start": "npm run start --prefix server"
+    "start": "npm run start --prefix server",
+    "format": "prettier --write \"**/*.{js,jsx,json,css,md,html}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,json,css,md,html}\""
   },
   "author": "Sasha Kravets",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "prettier": "^3.8.3"
   }
 }

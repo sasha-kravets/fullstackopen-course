@@ -45,9 +45,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const userid = user._id
 
   if (blog.user.toString() !== userid.toString()) {
-    return response
-      .status(403)
-      .json({ error: 'only the creator can delete this blog' })
+    return response.status(403).json({ error: 'only the creator can delete this blog' })
   }
 
   await Blog.findByIdAndDelete(request.params.id)

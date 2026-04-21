@@ -34,7 +34,7 @@ describe('blogs api', () => {
     token = `Bearer ${jwt.sign(userForToken, process.env.SECRET)}`
 
     const blogObjects = helper.initialBlogs.map(
-      (blog) => new Blog({ ...blog, user: savedUser._id }),
+      (blog) => new Blog({ ...blog, user: savedUser._id })
     )
 
     await Blog.insertMany(blogObjects)
@@ -101,9 +101,7 @@ describe('blogs api', () => {
 
       const blogsAtEnd = await helper.blogsInDb()
 
-      const addedBlogPost = blogsAtEnd.find(
-        (blog) => blog.title === newBlog.title,
-      )
+      const addedBlogPost = blogsAtEnd.find((blog) => blog.title === newBlog.title)
 
       assert(addedBlogPost.likes === 0)
     })
@@ -133,11 +131,7 @@ describe('blogs api', () => {
           likes: 30,
         }
 
-        await api
-          .post('/api/blogs')
-          .set('Authorization', token)
-          .send(blogWithoutTitle)
-          .expect(400)
+        await api.post('/api/blogs').set('Authorization', token).send(blogWithoutTitle).expect(400)
 
         const blogsAtEnd = await helper.blogsInDb()
 
@@ -151,11 +145,7 @@ describe('blogs api', () => {
           likes: 30,
         }
 
-        await api
-          .post('/api/blogs')
-          .set('Authorization', token)
-          .send(blogWithoutUrl)
-          .expect(400)
+        await api.post('/api/blogs').set('Authorization', token).send(blogWithoutUrl).expect(400)
 
         const blogsAtEnd = await helper.blogsInDb()
         assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
@@ -168,10 +158,7 @@ describe('blogs api', () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
-      await api
-        .delete(`/api/blogs/${blogToDelete.id}`)
-        .set('Authorization', token)
-        .expect(204)
+      await api.delete(`/api/blogs/${blogToDelete.id}`).set('Authorization', token).expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
 
@@ -321,9 +308,7 @@ describe('user administration and token authentication', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    assert(
-      result.body.error.includes('password must be at least 3 characters long'),
-    )
+    assert(result.body.error.includes('password must be at least 3 characters long'))
 
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
@@ -344,9 +329,7 @@ describe('user administration and token authentication', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    assert(
-      result.body.error.includes('password must be at least 3 characters long'),
-    )
+    assert(result.body.error.includes('password must be at least 3 characters long'))
 
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
